@@ -15,7 +15,7 @@ import com.google.zxing.MultiFormatWriter
 import com.google.zxing.common.BitMatrix
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 
-ƒ
+
 object QrImageRenderer {
 
     fun render(
