@@ -1,5 +1,12 @@
 import 'dart:convert';
 
+final RegExp _bankBinPattern = RegExp(r'^\d{6}$');
+final RegExp _accountNumberPattern = RegExp(r'^\d{6,19}$');
+final RegExp _amountPattern = RegExp(r'^\d{1,13}$');
+final RegExp _contentCharsetPattern = RegExp(r'^[A-Za-z0-9 ]*$');
+final RegExp _whitespacePattern = RegExp(r'\s+');
+
+/// Builds an EMVCo-compliant NAPAS bank-transfer QR payload string.
 class BankQrData {
   final String bankBin;
   final String accountNumber;
@@ -8,12 +15,15 @@ class BankQrData {
   /// Transfer message / purpose, shown to the payer's banking app.
   final String? content;
 
-  const BankQrData({
-    required this.bankBin,
-    required this.accountNumber,
-    this.amount,
-    this.content,
-  });
+  BankQrData({
+    required String bankBin,
+    required String accountNumber,
+    String? amount,
+    String? content,
+  }) : bankBin = _validateBankBin(bankBin),
+       accountNumber = _validateAccountNumber(accountNumber),
+       amount = _validateAmount(amount),
+       content = _normalizeContent(content);
 
   /// Parses the JSON shape `{"bankBin","accountNumber","amount","content"}`.
   factory BankQrData.fromJson(String source) {
@@ -57,6 +67,85 @@ class BankQrData {
         .padLeft(4, '0');
     return '$withCrcId$crc';
   }
+}
+
+/// Exactly 6 digits after trimming. Invalid characters are rejected, never
+/// silently stripped.
+String _validateBankBin(String value) {
+  final trimmed = value.trim();
+  if (!_bankBinPattern.hasMatch(trimmed)) {
+    throw ArgumentError.value(
+      value,
+      'bankBin',
+      'must be exactly 6 digits',
+    );
+  }
+  return trimmed;
+}
+
+/// Digits only, 6–19 characters after trimming. Kept as a [String] so
+/// leading zeros are preserved.
+String _validateAccountNumber(String value) {
+  final trimmed = value.trim();
+  if (!_accountNumberPattern.hasMatch(trimmed)) {
+    throw ArgumentError.value(
+      value,
+      'accountNumber',
+      'must contain only digits, 6-19 characters long',
+    );
+  }
+  return trimmed;
+}
+
+/// Optional (static QR). When provided: digits only, 1–13 characters, and
+/// greater than zero. No separators, decimals, or currency symbols — kept
+/// as a [String], never parsed as a [double].
+String? _validateAmount(String? value) {
+  if (value == null) return null;
+  final trimmed = value.trim();
+  if (trimmed.isEmpty) return null;
+
+  if (!_amountPattern.hasMatch(trimmed)) {
+    throw ArgumentError.value(
+      value,
+      'amount',
+      'must contain only digits (no separators, decimals, or currency symbols), '
+          'at most 13 digits',
+    );
+  }
+  if (int.parse(trimmed) <= 0) {
+    throw ArgumentError.value(value, 'amount', 'must be greater than 0');
+  }
+  return trimmed;
+}
+
+/// Optional. Trimmed, with internal whitespace collapsed to single spaces.
+/// Only plain ASCII letters, digits, and spaces are allowed — no Vietnamese
+/// diacritics or other special characters — and at most 25 characters after
+/// normalization.
+String? _normalizeContent(String? value) {
+  if (value == null) return null;
+  final trimmed = value.trim();
+  if (trimmed.isEmpty) return null;
+
+  final collapsed = trimmed.replaceAll(_whitespacePattern, ' ');
+
+  if (!_contentCharsetPattern.hasMatch(collapsed)) {
+    throw ArgumentError.value(
+      value,
+      'content',
+      'must contain only A-Z, a-z, 0-9 and spaces (no Vietnamese diacritics '
+          'or special characters)',
+    );
+  }
+  if (collapsed.length > 25) {
+    throw ArgumentError.value(
+      value,
+      'content',
+      'must be at most 25 characters',
+    );
+  }
+  return collapsed;
 }
 
 String _tlv(String id, String value) {

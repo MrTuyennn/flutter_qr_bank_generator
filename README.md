@@ -48,3 +48,15 @@ QrGeneratorView.bank(bankData: bankData)
 
 `amount` and `content` are optional; omitting `amount` produces a static
 (amount-less) bank-transfer QR code that the payer fills in themselves.
+
+`BankQrData` validates its fields and throws an `ArgumentError` if any rule
+is violated — invalid values are rejected, never silently fixed up:
+
+* `bankBin` — required, trimmed, exactly 6 digits.
+* `accountNumber` — required, trimmed, digits only, 6–19 characters (leading
+  zeros preserved).
+* `amount` — optional (omit for a static QR); if given, digits only, no
+  separators/decimals/currency symbols, 1–13 digits, and greater than 0.
+* `content` — optional; trimmed with repeated whitespace collapsed to a
+  single space, at most 25 characters, letters/digits/spaces only (no
+  Vietnamese diacritics or special characters).
