@@ -1,4 +1,4 @@
-package com.example.flutter_qr_bank_generator.qrcode
+package com.mobile.flutter_qr_bank_generator.qrcode
 
 import android.content.Context
 import android.graphics.Bitmap

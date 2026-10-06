@@ -1,6 +1,6 @@
-package com.example.flutter_qr_bank_generator
+package com.mobile.flutter_qr_bank_generator
 
-import com.example.flutter_qr_bank_generator.qrcode.QrCodeFactory
+import com.mobile.flutter_qr_bank_generator.qrcode.QrCodeFactory
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 
 const val VIEW_TYPE_QR_GENERATOR = "flutter_qr_bank_generator/qrcode"

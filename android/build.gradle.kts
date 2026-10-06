@@ -1,4 +1,4 @@
-group = "com.example.flutter_qr_bank_generator"
+group = "com.mobile.flutter_qr_bank_generator"
 version = "1.0-SNAPSHOT"
 
 buildscript {
@@ -26,7 +26,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.flutter_qr_bank_generator"
+    namespace = "com.mobile.flutter_qr_bank_generator"
 
     compileSdk = 36
 

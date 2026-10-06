@@ -1,8 +1,9 @@
 name: flutter_qr_bank_generator
-description: "Native QR code generation view (Android ZXing / iOS CoreImage) with image overlay."
+description: "Native QR code generation view (Android ZXing / iOS CoreImage) with image overlay and a NAPAS bank-transfer QR payload builder."
 version: 0.0.1
-homepage:
-publish_to: "none"
+homepage: https://github.com/MrTuyennn/flutter_qr_bank_generator
+repository: https://github.com/MrTuyennn/flutter_qr_bank_generator
+issue_tracker: https://github.com/MrTuyennn/flutter_qr_bank_generator/issues
 
 environment:
   sdk: ^3.13.1
@@ -35,7 +36,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.example.flutter_qr_bank_generator
+        package: com.mobile.flutter_qr_bank_generator
         pluginClass: FlutterQrBankGeneratorPlugin
       ios:
         pluginClass: FlutterQrBankGeneratorPlugin
