@@ -23,6 +23,25 @@ QrGeneratorView(
 Falls back to the host app's `app_icon` drawable/asset if `image` is omitted
 or fails to resolve.
 
+### QrGeneratorView vs. QrGeneratorImage
+
+There are two widgets to render a QR code:
+
+* **`QrGeneratorView`** (default) — a native platform view
+  (`AndroidView`/`UiKitView`). Paints instantly, but being a native view, it
+  **can't be captured** with a `RepaintBoundary`/`RenderRepaintBoundary.toImage()`
+  screenshot (it shows up blank).
+* **`QrGeneratorImage`** — the same bytes `downloadQrCode`/`shareQrCode`
+  produce, displayed with a plain `Image.memory`. Renders asynchronously
+  (there's a brief loading gap — customize it with `loadingBuilder`/
+  `errorBuilder`), but being a normal Flutter widget, it **can** be
+  captured with a `RepaintBoundary`.
+
+Both take the same constructors (`content:`, `.bank(bankData:)`,
+`.from(data:)`). Use `QrGeneratorView` by default; switch to
+`QrGeneratorImage` only where you need to screenshot the QR together with
+other Flutter content.
+
 ### Bank transfer
 
 Pass a `BankQrData` model to `QrGeneratorView.bank`:

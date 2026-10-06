@@ -1,3 +1,8 @@
+## 1.0.4
+
+* Added `QrGeneratorImage` — renders the QR as a plain `Image.memory` widget (same bytes as `downloadQrCode`/`shareQrCode`) instead of a native platform view. Unlike `QrGeneratorView`, it can be captured with a `RepaintBoundary`/`RenderRepaintBoundary.toImage()` screenshot.
+* Added `downloadImageBytes()`/`shareImageBytes()` — save or share arbitrary PNG bytes (e.g. a custom screenshot) without generating a QR.
+
 ## 1.0.3
 
 * Fix some bug.

@@ -17,7 +17,7 @@ QrData _resolveData(QrData? data) {
   return resolved;
 }
 
-Future<Uint8List> _generateQrImage(QrData data) async {
+Future<Uint8List> generateQrImage(QrData data) async {
   final resolvedContent = data.bankData?.toPayload() ?? data.content;
   if (resolvedContent == null) {
     throw ArgumentError('QrData must have either content or bankData');
@@ -36,7 +36,7 @@ Future<Uint8List> _generateQrImage(QrData data) async {
 
 /// Returns `true` if the image was saved successfully.
 Future<bool> downloadQrCode({QrData? data, String fileName = 'qrcode'}) async {
-  final bytes = await _generateQrImage(_resolveData(data));
+  final bytes = await generateQrImage(_resolveData(data));
   final saved = await _channel.invokeMethod<bool>('download', {
     'bytes': bytes,
     'fileName': fileName,
@@ -44,14 +44,36 @@ Future<bool> downloadQrCode({QrData? data, String fileName = 'qrcode'}) async {
   return saved ?? false;
 }
 
-/// [text] is an optional caption shared alongside the image. Returns `true`
-/// if the share sheet was shown.
 Future<bool> shareQrCode({
   QrData? data,
   String fileName = 'qrcode',
   String? text,
 }) async {
-  final bytes = await _generateQrImage(_resolveData(data));
+  final bytes = await generateQrImage(_resolveData(data));
+  final shared = await _channel.invokeMethod<bool>('share', {
+    'bytes': bytes,
+    'fileName': fileName,
+    'text': text,
+  });
+  return shared ?? false;
+}
+
+Future<bool> downloadImageBytes(
+  Uint8List bytes, {
+  String fileName = 'qrcode',
+}) async {
+  final saved = await _channel.invokeMethod<bool>('download', {
+    'bytes': bytes,
+    'fileName': fileName,
+  });
+  return saved ?? false;
+}
+
+Future<bool> shareImageBytes(
+  Uint8List bytes, {
+  String fileName = 'qrcode',
+  String? text,
+}) async {
   final shared = await _channel.invokeMethod<bool>('share', {
     'bytes': bytes,
     'fileName': fileName,
