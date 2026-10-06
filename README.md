@@ -60,3 +60,29 @@ is violated — invalid values are rejected, never silently fixed up:
 * `content` — optional; trimmed with repeated whitespace collapsed to a
   single space, at most 25 characters, letters/digits/spaces only (no
   Vietnamese diacritics or special characters).
+
+### Download / share
+
+`downloadQrCode`/`shareQrCode` regenerate the exact same QR (content/image)
+natively. Once a `QrGeneratorView` has rendered on screen, you don't need to
+pass its content again — they default to the content of the most recently
+rendered `QrGeneratorView`:
+
+```dart
+QrGeneratorView.bank(bankData: bankData, image: 'https://example.com/logo.png')
+...
+await downloadQrCode(); // save a PNG to the photo gallery
+await shareQrCode(text: 'My QR'); // open the share sheet
+```
+
+Both also take an optional `fileName` (defaults to `'qrcode'`); `shareQrCode`
+additionally takes an optional `text` caption. Both return `true` on success.
+
+Platform requirements:
+
+* **Android** — no setup needed. Saving uses `MediaStore` (no runtime
+  permission on API 29+); the plugin declares `WRITE_EXTERNAL_STORAGE` with
+  `maxSdkVersion="28"` for older devices.
+* **iOS** — add `NSPhotoLibraryAddUsageDescription` to your app's
+  `Info.plist` (required by `downloadQrCode`, which asks for photo-library
+  add-only access).
