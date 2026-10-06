@@ -1,3 +1,7 @@
+## 1.0.3
+
+* Fix some bug.
+
 ## 1.0.2
 
 * Added `downloadQrCode()` and `shareQrCode()` — generate a QR (same rendering as `QrGeneratorView`, no widget required) and save it to the gallery or open the native share sheet. Android uses `MediaStore`/`FileProvider`; iOS uses `PHPhotoLibrary`/`UIActivityViewController` (requires `NSPhotoLibraryAddUsageDescription` in the host app's `Info.plist`).
